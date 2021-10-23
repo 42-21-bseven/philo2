@@ -4,10 +4,10 @@
 
 #include "philo.h"
 
-void 	put_err(char *str)
+int 	put_err(char *str)
 {
 	printf("\n%s\n", str);
-	exit(1);
+	return (1);
 }
 
 LLU		current_time()
@@ -71,23 +71,21 @@ void 	init_args(t_args *args, char **av)
 		args->numb_of_meals = ft_atoi(av[5]);
 	else
 		args->numb_of_meals = -1;
-
 	pthread_mutex_init(&args->output, NULL); //??
-
 }
 
 int 	init_table(t_args *args)
 {
 	args->philos = malloc(sizeof(t_philos) * args->number_of_philosophers);
 	if (!(args->philos))
-		put_err("ERROR philos alloc");
+		return (put_err("ERROR philos alloc"));
 	args->forks = malloc(sizeof (pthread_mutex_t) * args->number_of_philosophers);
 	if (!args->forks)
-		put_err("ERROR forks alloc");
+		return (put_err("ERROR forks alloc"));
 	return (0);
 }
 
-int 	init_philo(t_args *args)
+void 	init_philo(t_args *args)
 {
 	int i;
 
@@ -155,21 +153,14 @@ int 	ft_eat(t_philos *philo)
 
 void	*philos_thread(void *src)
 {
-	int i;
-	int flag;
 	t_philos *philo;
 
-
-	flag = 1;
 	philo = (t_philos *)src;
-
-	while (flag == 1)
+	while (1)
 	{
-//		printf("phN: %d while start\n", philo->name_philo);
 		if (ft_eat(philo))
 			return (0);
 		ft_output(philo, "is sleeping.");
-		flag = 1;
 		ft_usleep(5);
 	}
 }
@@ -204,80 +195,34 @@ int 	create_threads(t_args *args)
 {
 	int i = 0;
 	if (pthread_create(&args->dead_thread, NULL, dead_thread, args) != 0)
-		put_err("ERROR thread");
-
+		return (put_err("ERROR thread"));
 	while (i < args->number_of_philosophers)
 		pthread_mutex_init(&args->forks[i++], NULL);
 	i = 0;
 	while (i < args->number_of_philosophers)
 	{
 //		pthread_mutex_init(&args->forks[i], NULL);
-		pthread_create(&args->philos[i].ph_thread, NULL, philos_thread, &args->philos[i]);
+		if (pthread_create(&args->philos[i].ph_thread, NULL, philos_thread, &args->philos[i]) != 0)
+			return (put_err("ERROR thread"));
 		i++;
 		ft_usleep(1);
 	}
-/*	i = 1;
-	while (i < args->number_of_philosophers)
-	{
-//		pthread_mutex_init(&args->forks[i], NULL);
-		pthread_create(&args->philos[i].ph_thread, NULL, philos_thread, &args->philos[i]);
-		i += 2;
-//		usleep(17);
-	}*/
-
+	return (0);
 }
 
 int 	main(int ac, char **av)
 {
 	t_args args;
 
-	int i = 0;
-
 	if (check_args(ac, av) < 0)
 		put_err("ERROR in args!");
-	printf("\nHello World! = %lli\n\n", current_time());
-	while (i < ac)
-		printf("arg%d = %s\n", i, av[i++]);
 	init_args(&args, av);
-	printf("\nint_args == %d,%d,%d,%d,%d\n\n", args.number_of_philosophers, args.time_to_die, args.time_to_eat, args.time_to_sleep, args.numb_of_meals);
-	init_table(&args);
-	i = 0;
-//	while (i < args.number_of_philosophers)
-//		printf("philo#%d    l.fork -> %d | %d <- r.fork\n", args.philos[i].name_philo, args.philos[i].left_fork, args.philos[i++].right_fork);
-
+	if (init_table(&args))
+		return (1);
 	init_philo(&args);
-	create_threads(&args);
-
-//	i = 0;
-//	while (i < args.number_of_philosophers)
-//	{
-//		pthread_mutex_init(&args.forks[i], NULL);
-//		if (pthread_create(&args.philos[i].ph_thread, NULL, &philos_thread, &args.philos[i]) != 0)
-//			return (1);
-//		i++;
-//		usleep(130);
-//
-//	}
-//	i = 1;
-//	while (i < args.number_of_philosophers)
-//	{
-//		pthread_mutex_init(&args.forks[i], NULL);
-//		if (pthread_create(&args.philos[i].ph_thread, NULL, &philos_thread, &args.philos[i]) != 0)
-//			return (1);
-//		i += 2;
-//		usleep(130);
-//
-//	}
-
-//	pause();
-	pthread_join(args.dead_thread, NULL);
-
-//	pthread_create(&args.main_tread, NULL, main_tread, (void *)&args);
-
-
-//	init_philo(&args);
-//	i = 0;
-//	while (i < args.number_of_philosophers)
-//		printf("philo#%d    l.fork -> %d | %d <- r.fork\n", args.philos[i].name_philo, args.philos[i].left_fork, args.philos[i++].right_fork);
+	if (create_threads(&args))
+		return (1);
+	else
+		pthread_join(args.dead_thread, NULL);
 	return 0;
 }

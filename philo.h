@@ -23,7 +23,6 @@ typedef struct	s_philos
 	pthread_t 			ph_thread;
 	int 				full_saturation;
 
-
 }								t_philos;
 
 typedef struct	s_args
@@ -40,9 +39,6 @@ typedef struct	s_args
 	pthread_mutex_t 	output;
 
 }								t_args;
-
-//typedef struct
-
 
 #endif //PHILO2_PHILO_H
 

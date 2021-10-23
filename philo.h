@@ -21,6 +21,7 @@ typedef struct	s_philos
 	void 				*args;
 	LLU					last_eat;
 	pthread_t 			ph_thread;
+	int 				full_saturation;
 
 
 }								t_philos;
@@ -37,7 +38,7 @@ typedef struct	s_args
 	t_philos 			*philos;
 	pthread_t 			dead_thread;
 	pthread_mutex_t 	output;
-	int 				full_saturation;
+
 }								t_args;
 
 //typedef struct

@@ -70,7 +70,7 @@ void 	init_args(t_args *args, char **av)
 	if (av[5] != NULL)
 		args->numb_of_meals = ft_atoi(av[5]);
 	else
-		args->numb_of_meals = 0;
+		args->numb_of_meals = -1;
 
 	pthread_mutex_init(&args->output, NULL); //??
 
@@ -94,19 +94,21 @@ int 	init_philo(t_args *args)
 	i = 0;
 	while (i < args->number_of_philosophers -1)
 	{
-		args->philos[i].name_philo = i;
+		args->philos[i].name_philo = i + 1;
 		args->philos[i].left_fork = i;
 		args->philos[i].right_fork = i + 1;
 		args->philos[i].args = args;
 		args->philos[i].last_eat = current_time();
+		args->philos[i].full_saturation = 0;
 		i++;
 	}
-	args->philos[i].name_philo = i;
+	args->philos[i].name_philo = i + 1;
 	args->philos[i].left_fork = i;
 	args->philos[i].right_fork = 0;
 	args->philos[i].args = args;
 	args->born_time = current_time();
 	args->philos[i].last_eat = current_time();
+	args->philos[i].full_saturation = 0;
 }
 
 LLU		ft_usleep(int time)
@@ -144,9 +146,9 @@ int 	ft_eat(t_philos *philo)
 	ft_output(philo, "PUT the left fork");
 	pthread_mutex_unlock(&args->forks[philo->right_fork]);
 	ft_output(philo, "PUT the right fork");
-	if (args->full_saturation < args->numb_of_meals * args->number_of_philosophers)
-		args->full_saturation += 1;
-	else
+	if (philo->full_saturation < args->numb_of_meals)
+		philo->full_saturation++;
+	if (philo->full_saturation == args->numb_of_meals)
 		return (1);
 	return (0);
 }
@@ -166,6 +168,7 @@ void	*philos_thread(void *src)
 //		printf("phN: %d while start\n", philo->name_philo);
 		if (ft_eat(philo))
 			return (0);
+		ft_output(philo, "is sleeping.");
 		flag = 1;
 		ft_usleep(5);
 	}
@@ -174,29 +177,27 @@ void	*philos_thread(void *src)
 void 	*dead_thread(void *src)
 {
 	int i;
+	int k;
 	t_args *dest;
 
-	i = 0;
 	dest = (t_args *)src;
 	while (1)
 	{
 		i = 0;
+		k = 0;
 		while (i < dest->number_of_philosophers) {
-//		dest->philos[i].last_eat = current_time();
-//			printf("\nNAME=>%d ...  L_fork=%u | R_fork=%u ... T_T_D => %d   C_T => %lli   L_E => %lli",
-//				   i, dest->philos[i].left_fork, dest->philos[i].right_fork,
-//				   dest->time_to_die, current_time(), dest->philos[i].last_eat);
-			if (dest->time_to_die <
-				(long long) (current_time() - dest->philos[i].last_eat))
+			if (dest->time_to_die <	(long long) (current_time() - dest->philos[i].last_eat))
 			{
 				pthread_mutex_lock(&dest->output);
-				printf("\n%lli philo#%d is dead\n", current_time() - dest->born_time, i);
+				printf("\n%lli philo#%d is dead\n", current_time() - dest->born_time, i + 1);
 				return (NULL);
 			}
+			k = k + dest->philos[i].full_saturation;
+			if (k == dest->number_of_philosophers * dest->numb_of_meals)
+				return (NULL);
 			i++;
 		}
 	}
-	printf("\n");
 }
 
 int 	create_threads(t_args *args)
@@ -214,7 +215,6 @@ int 	create_threads(t_args *args)
 		pthread_create(&args->philos[i].ph_thread, NULL, philos_thread, &args->philos[i]);
 		i++;
 		ft_usleep(1);
-//		usleep(22);
 	}
 /*	i = 1;
 	while (i < args->number_of_philosophers)

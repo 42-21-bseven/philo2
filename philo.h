@@ -18,7 +18,7 @@ typedef struct	s_philos
 	int					name_philo;
 	unsigned 			left_fork;
 	unsigned 			right_fork;
-	void 				*args;
+	struct s_args 		*args;
 	LLU					last_eat;
 	pthread_t 			ph_thread;
 	int 				full_saturation;

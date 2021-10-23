@@ -109,9 +109,9 @@ void 	init_philo(t_args *args)
 	args->philos[i].full_saturation = 0;
 }
 
-LLU		ft_usleep(int time)
+void		ft_usleep(int time)
 {
-	long	t;
+	LLU	t;
 
 	t = current_time();
 	while (current_time() - t < time)
@@ -124,7 +124,7 @@ void 	ft_output(t_philos *philos, char *str)
 
 	args = (t_args *)philos->args;
 	pthread_mutex_lock(&args->output);
-	printf("      %llu ... philo#%d ... %s\n", (current_time() - args->born_time), philos->name_philo, str);
+	printf("%llu\tphilo#%d ... %s\n", (current_time() - args->born_time), philos->name_philo, str);
 	pthread_mutex_unlock(&args->output);
 }
 
@@ -161,6 +161,8 @@ void	*philos_thread(void *src)
 		if (ft_eat(philo))
 			return (0);
 		ft_output(philo, "is sleeping.");
+		ft_usleep(philo->args->time_to_sleep);
+		ft_output(philo, "is thinking.");
 		ft_usleep(5);
 	}
 }
@@ -215,7 +217,7 @@ int 	main(int ac, char **av)
 	t_args args;
 
 	if (check_args(ac, av) < 0)
-		put_err("ERROR in args!");
+		return (put_err("ERROR in args!"));
 	init_args(&args, av);
 	if (init_table(&args))
 		return (1);

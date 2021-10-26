@@ -6,7 +6,7 @@
 
 int 	put_err(char *str)
 {
-	printf("\n%s\n", str);
+	printf("\nERROR%s\n", str);
 	return (1);
 }
 
@@ -61,7 +61,7 @@ int 	check_args(int ac, char **av)
 	return 0;
 }
 
-void 	init_args(t_args *args, char **av)
+void 	parse_args(t_args *args, char **av)
 {
 	args->number_of_philosophers = ft_atoi(av[1]);
 	args->time_to_die = ft_atoi(av[2]);
@@ -74,14 +74,30 @@ void 	init_args(t_args *args, char **av)
 	pthread_mutex_init(&args->output, NULL); //??
 }
 
+int 	check_vol(t_args args)
+{
+	if (args.number_of_philosophers < 2 || args.number_of_philosophers > 200)
+		return (put_err("! Wrong number of philosophers."));
+	if (args.time_to_die < 1)
+		return (put_err("! Wrong time to die."));
+	if (args.time_to_eat < 1)
+		return (put_err("! Wrong meal time."));
+	if (args.time_to_sleep < 1)
+		return (put_err("! Wrong sleep to time."));
+	if (args.numb_of_meals == 0)
+		return (put_err(". These philosophers are fed up."));
+	return (0);
+
+}
+
 int 	init_table(t_args *args)
 {
 	args->philos = malloc(sizeof(t_philos) * args->number_of_philosophers);
 	if (!(args->philos))
-		return (put_err("ERROR philos alloc"));
+		return (put_err(" philos alloc."));
 	args->forks = malloc(sizeof (pthread_mutex_t) * args->number_of_philosophers);
 	if (!args->forks)
-		return (put_err("ERROR forks alloc"));
+		return (put_err(" forks alloc."));
 	return (0);
 }
 
@@ -124,7 +140,7 @@ void 	ft_output(t_philos *philos, char *str)
 
 	args = (t_args *)philos->args;
 	pthread_mutex_lock(&args->output);
-	printf("%llu\tphilo#%d ... %s\n", (current_time() - args->born_time), philos->name_philo, str);
+	printf("%llu\tphilo#%d \t...\t %s\n", (current_time() - args->born_time), philos->name_philo, str);
 	pthread_mutex_unlock(&args->output);
 }
 
@@ -197,7 +213,7 @@ int 	create_threads(t_args *args)
 {
 	int i = 0;
 	if (pthread_create(&args->dead_thread, NULL, dead_thread, args) != 0)
-		return (put_err("ERROR thread"));
+		return (put_err(" thread create."));
 	while (i < args->number_of_philosophers)
 		pthread_mutex_init(&args->forks[i++], NULL);
 	i = 0;
@@ -205,7 +221,7 @@ int 	create_threads(t_args *args)
 	{
 //		pthread_mutex_init(&args->forks[i], NULL);
 		if (pthread_create(&args->philos[i].ph_thread, NULL, philos_thread, &args->philos[i]) != 0)
-			return (put_err("ERROR thread"));
+			return (put_err(" thread create."));
 		i++;
 		ft_usleep(1);
 	}
@@ -217,8 +233,10 @@ int 	main(int ac, char **av)
 	t_args args;
 
 	if (check_args(ac, av) < 0)
-		return (put_err("ERROR in args!"));
-	init_args(&args, av);
+		return (put_err(" in args!"));
+	parse_args(&args, av);
+	if (check_vol(args))
+		return (1);
 	if (init_table(&args))
 		return (1);
 	init_philo(&args);

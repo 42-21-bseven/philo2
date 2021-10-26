@@ -37,7 +37,7 @@ typedef struct	s_args
 	t_philos 			*philos;
 	pthread_t 			dead_thread;
 	pthread_mutex_t 	output;
-
+	int					err;
 }								t_args;
 
 #endif //PHILO2_PHILO_H

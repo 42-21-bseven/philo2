@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named philo2
+# Target rules for targets named philo_bonus
 
 # Build rule for target.
-philo2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 philo2
-.PHONY : philo2
+philo_bonus: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 philo_bonus
+.PHONY : philo_bonus
 
 # fast build rule for target.
-philo2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/build
-.PHONY : philo2/fast
+philo_bonus/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/build
+.PHONY : philo_bonus/fast
 
 philo.o: philo.c.o
 .PHONY : philo.o
 
 # target to build an object file
 philo.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/philo.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/philo.c.o
 .PHONY : philo.c.o
 
 philo.i: philo.c.i
@@ -142,7 +142,7 @@ philo.i: philo.c.i
 
 # target to preprocess a source file
 philo.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/philo.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/philo.c.i
 .PHONY : philo.c.i
 
 philo.s: philo.c.s
@@ -150,7 +150,7 @@ philo.s: philo.c.s
 
 # target to generate assembly for a file
 philo.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/philo.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/philo.c.s
 .PHONY : philo.c.s
 
 # Help Target
@@ -161,7 +161,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... philo2"
+	@echo "... philo_bonus"
 	@echo "... philo.o"
 	@echo "... philo.i"
 	@echo "... philo.s"

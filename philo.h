@@ -5,11 +5,12 @@
 #ifndef PHILO_H
 # define PHILO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <sys/time.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <pthread.h>
+# include <sys/time.h>
+# include <sys/semaphore.h>
 
 #define LLU long long unsigned
 
@@ -22,6 +23,7 @@ typedef struct	s_philos
 	LLU					last_eat;
 	pthread_t 			ph_thread;
 	int 				full_saturation;
+	pid_t				*pid;
 
 }								t_philos;
 
@@ -32,12 +34,12 @@ typedef struct	s_args
 	int 			    time_to_eat;
 	int 			    time_to_sleep;
 	int  				numb_of_meals;
-	pthread_mutex_t 	*forks;
+	sem_t				*forks;
 	LLU					born_time;
 	t_philos 			*philos;
-	pthread_t 			dead_thread;
-	pthread_mutex_t 	output;
+	sem_t 				*output;
 	int					err;
+	pid_t 				*pid;
 }								t_args;
 
 #endif //PHILO2_PHILO_H

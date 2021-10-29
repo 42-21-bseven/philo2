@@ -142,7 +142,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=philo2
+CMAKE_PROJECT_NAME:STATIC=philo_bonus
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
@@ -214,6 +214,12 @@ philo2_BINARY_DIR:STATIC=/Users/bseven/2Project/philo2/cmake-build-debug
 
 //Value Computed by CMake
 philo2_SOURCE_DIR:STATIC=/Users/bseven/2Project/philo2
+
+//Value Computed by CMake
+philo_bonus_BINARY_DIR:STATIC=/Users/bseven/2Project/philo2/cmake-build-debug
+
+//Value Computed by CMake
+philo_bonus_SOURCE_DIR:STATIC=/Users/bseven/2Project/philo2
 
 
 ########################

@@ -213,8 +213,6 @@ void 	*dead_thread(void *src)
 int 	create_threads(t_args *args)
 {
 	int i = 0;
-	if (pthread_create(&args->dead_thread, NULL, dead_thread, args) != 0)
-		return (put_err(" thread create."));
 	while (i < args->number_of_philosophers)
 		pthread_mutex_init(&args->forks[i++], NULL);
 	i = 0;

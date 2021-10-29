@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /Users/bseven/2Project/philo2/cmake-build-debug
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/philo2.dir/all
+all: CMakeFiles/philo_bonus.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -71,34 +71,34 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/philo2.dir/clean
+clean: CMakeFiles/philo_bonus.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/philo2.dir
+# Target rules for target CMakeFiles/philo_bonus.dir
 
 # All Build rule for target.
-CMakeFiles/philo2.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/bseven/2Project/philo2/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target philo2"
-.PHONY : CMakeFiles/philo2.dir/all
+CMakeFiles/philo_bonus.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/bseven/2Project/philo2/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target philo_bonus"
+.PHONY : CMakeFiles/philo_bonus.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/philo2.dir/rule: cmake_check_build_system
+CMakeFiles/philo_bonus.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/bseven/2Project/philo2/cmake-build-debug/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/philo2.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/philo_bonus.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/bseven/2Project/philo2/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/philo2.dir/rule
+.PHONY : CMakeFiles/philo_bonus.dir/rule
 
 # Convenience name for target.
-philo2: CMakeFiles/philo2.dir/rule
-.PHONY : philo2
+philo_bonus: CMakeFiles/philo_bonus.dir/rule
+.PHONY : philo_bonus
 
 # clean rule for target.
-CMakeFiles/philo2.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo2.dir/build.make CMakeFiles/philo2.dir/clean
-.PHONY : CMakeFiles/philo2.dir/clean
+CMakeFiles/philo_bonus.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/philo_bonus.dir/build.make CMakeFiles/philo_bonus.dir/clean
+.PHONY : CMakeFiles/philo_bonus.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

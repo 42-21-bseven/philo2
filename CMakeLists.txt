@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(philo_bonus C)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 
 #include_directories(.)
 #

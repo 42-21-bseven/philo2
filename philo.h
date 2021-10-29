@@ -10,15 +10,14 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
-# include <sys/semaphore.h>
+# include <semaphore.h>
+# include <signal.h>
 
 #define LLU long long unsigned
 
 typedef struct	s_philos
 {
 	int					name_philo;
-	unsigned 			left_fork;
-	unsigned 			right_fork;
 	struct s_args 		*args;
 	LLU					last_eat;
 	pthread_t 			ph_thread;

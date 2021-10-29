@@ -8,6 +8,7 @@ int 	put_err(char *str)
 {
 	printf("\nERROR%s\n", str);
 	return (1);
+
 }
 
 LLU		current_time()
@@ -228,6 +229,18 @@ int 	create_threads(t_args *args)
 	return (0);
 }
 
+void		all_free(t_args *args)
+{
+	if (args->forks)
+		pthread_mutex_destroy(args->forks);
+	if (args->philos)
+		free(args->philos);
+	if (args->forks)
+		free(args->forks);
+	args->philos = NULL;
+	args->forks = NULL;
+}
+
 int 	main(int ac, char **av)
 {
 	t_args args;
@@ -244,5 +257,6 @@ int 	main(int ac, char **av)
 		return (1);
 	else
 		pthread_join(args.dead_thread, NULL);
+	all_free(&args);
 	return 0;
 }

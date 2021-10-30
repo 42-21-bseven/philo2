@@ -21,18 +21,21 @@ LLU		current_time()
 
 int		ft_atoi(char *str)
 {
-	int res;
+	long res;
 
 	res = 0;
 	while (*str)
 	{
 		if (*str < '0' || *str > '9')
 			return (-1);
-		res = res * 10 + (*str++ - '0');
+		if (res < 2147483648)
+			res = res * 10 + (*str++ - '0');
+		else
+			return (-1);
 	}
-	if (res > 2147483647 || res < 0)
+	if (res > 2147483647)
 		return (-1);
-	return (res);
+	return ((int)res);
 }
 
 int 	chk_not_num(char *str)
@@ -72,7 +75,6 @@ void 	parse_args(t_args *args, char **av)
 		args->numb_of_meals = ft_atoi(av[5]);
 	else
 		args->numb_of_meals = -1;
-//	pthread_mutex_init(&args->output, NULL); //??
 }
 
 int 	check_vol(t_args args)
@@ -96,9 +98,11 @@ int 	init_table(t_args *args)
 	args->philos = malloc(sizeof(t_philos) * args->number_of_philosophers);
 	if (!(args->philos))
 		return (put_err(" philos alloc."));
-	args->forks = malloc(sizeof (pthread_mutex_t) * args->number_of_philosophers);
-	if (!args->forks)
-		return (put_err(" forks alloc."));
+	sem_unlink("forks");
+	sem_unlink("output");
+	args->output = sem_open("output", O_CREAT, 0666, 1);
+	args->forks = sem_open("forks", O_CREAT, 0666, args->number_of_philosophers);
+	args->pid = malloc(sizeof (pid_t) * args->number_of_philosophers);
 	return (0);
 }
 
@@ -133,15 +137,12 @@ void		ft_usleep(int time)
 
 void 	ft_output(t_philos *philos, char *str)
 {
-	t_args *args;
-
-	args = (t_args *)philos->args;
-	sem_wait(args->output);
-	printf("%llu\tphilo#%d \t...\t %s\n", (current_time() - args->born_time), philos->name_philo, str);
-	sem_post(args->output);
+	sem_wait(philos->args->output);
+	printf("%llu\tphilo#%d \t...\t %s\n", (current_time() - philos->args->born_time), philos->name_philo, str);
+	sem_post(philos->args->output);
 }
 
-int 	ft_eat(t_philos *philo)
+void 	ft_eat(t_philos *philo)
 {
 	t_args *args;
 
@@ -151,17 +152,17 @@ int 	ft_eat(t_philos *philo)
 	sem_wait(args->forks);
 	ft_output(philo, "take RIGHT fork");
 	ft_output(philo, "is OM NOM NOM doing");
-	philo->last_eat = current_time();
 	ft_usleep(args->time_to_eat);
 	sem_post(args->forks);
 	ft_output(philo, "PUT the left fork");
 	sem_post(args->forks);
 	ft_output(philo, "PUT the right fork");
+	philo->last_eat = current_time();
 	if (philo->full_saturation < args->numb_of_meals)
 		philo->full_saturation++;
 	if (philo->full_saturation == args->numb_of_meals)
 		exit (0);
-	return (0);
+//	return (0);
 }
 
 void	*philos_thread(void *src)
@@ -169,40 +170,41 @@ void	*philos_thread(void *src)
 	t_philos *philo;
 
 	philo = (t_philos *)src;
+//	if (!(philo->name_philo % 2))
+//		ft_usleep(5);
 	while (1)
 	{
-		if (ft_eat(philo))
-			return (0);
+		ft_eat(philo);
 		ft_output(philo, "is sleeping.");
 		ft_usleep(philo->args->time_to_sleep);
 		ft_output(philo, "is thinking.");
-		ft_usleep(5);
+//		ft_usleep(5);
 	}
 }
-int 	*dead_thread(t_args *dest)
-{
-	int i;
-	int k;
-
-	while (1)
-	{
-		i = 0;
-		k = 0;
-		while (i < dest->number_of_philosophers) {
-			if (dest->time_to_die <	(long long) (current_time() - dest->philos->last_eat))
-			{
-				sem_wait(dest->output);
-				printf("%lli philo#%d is dead\n", current_time() - dest->born_time, dest->philos->name_philo);
-				ft_usleep(10);
-				exit (0);
-			}
-			k = k + dest->philos->full_saturation;
-			if (k == dest->number_of_philosophers * dest->numb_of_meals)
-				exit (0);
-			i++;
-		}
-	}
-}
+//int 	*dead_thread(t_args *dest)
+//{
+//	int i;
+//	int k;
+//
+//	while (1)
+//	{
+//		i = 0;
+//		k = 0;
+//		while (i < dest->number_of_philosophers) {
+//			if (dest->time_to_die <	(long long) (current_time() - dest->philos->last_eat))
+//			{
+//				sem_wait(dest->output);
+//				printf("%lli philo#%d is dead\n", current_time() - dest->born_time, dest->philos->name_philo);
+//				ft_usleep(10);
+//				exit (0);
+//			}
+//			k = k + dest->philos->full_saturation;
+//			if (k == dest->number_of_philosophers * dest->numb_of_meals)
+//				exit (0);
+//			i++;
+//		}
+//	}
+//}
 
 int 	*uber_dead_thread(t_philos *dest)
 {
@@ -212,7 +214,7 @@ int 	*uber_dead_thread(t_philos *dest)
 		{
 			sem_wait(dest->args->output);
 			printf("%lli philo#%d is dead\n", current_time() - dest->args->born_time, dest->name_philo);
-			ft_usleep(10);
+//			ft_usleep(4);
 			exit (0);
 		}
 		if (dest->full_saturation == dest->args->numb_of_meals)
@@ -224,39 +226,32 @@ int 	create_threads(t_args *args)
 {
 	int i;
 
-	sem_unlink("forks");
-	sem_unlink("output");
-	args->output = sem_open("output", O_CREAT, 0666, 1);
-	args->forks = sem_open("forks", O_CREAT, 0666, args->number_of_philosophers);
 	i = 0;
-	args->pid = malloc(sizeof (pid_t) * args->number_of_philosophers);
+	args->born_time = current_time();
 	while (i < args->number_of_philosophers)
 	{
-		args->philos[i].pid = args->pid;
 		args->pid[i] = fork();
 		if (args->pid[i] < 0)
 			return (1);
 		else if (args->pid[i] == 0)
 		{
-			args->born_time = current_time();
 			if (pthread_create(&args->philos[i].ph_thread, NULL, philos_thread, &args->philos[i]) != 0)
 				return (put_err(" thread create."));
-			uber_dead_thread(&(args->philos[i]));
+			uber_dead_thread(&(args->philos[i++]));
+//			dead_thread(args);
 		}
 		i++;
-
-//		ft_usleep(4);
 	}
 	waitpid(-1, NULL, 0);
 	return (0);
 }
 
-void		all_free(t_args *args)
+void	all_free(t_args *args)
 {
-	int i;
+	int	i;
 
 	i = -1;
-	while(++i < args->number_of_philosophers)
+	while (++i < args->number_of_philosophers)
 		kill(args->pid[i], SIGINT);
 	sem_unlink("forks");
 	sem_unlink("output");
@@ -267,9 +262,9 @@ void		all_free(t_args *args)
 	exit (0);
 }
 
-int 	main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	t_args args;
+	t_args	args;
 
 	if (check_args(ac, av) < 0)
 		return (put_err(" in args!"));
@@ -282,5 +277,5 @@ int 	main(int ac, char **av)
 	if (create_threads(&args))
 		return (1);
 	all_free(&args);
-	return 0;
+	return (0);
 }

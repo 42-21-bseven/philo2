@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bseven <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/31 13:00:37 by bseven            #+#    #+#             */
+/*   Updated: 2021/10/31 13:00:39 by bseven           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 //
 // Created by Brooks Seven on 10/15/21.
 //
@@ -37,7 +49,20 @@ typedef struct s_args
 	t_philos			*philos;
 	pthread_t			dead_thread;
 	pthread_mutex_t		output;
-	int					err;
 }								t_args;
+
+int		ft_atoi(char *str);
+int		chk_not_num(char *str);
+int		check_args(int ac, char **av);
+void	parse_args(t_args *args, char **av);
+int		check_vol(t_args args);
+void	init_null(t_args *args);
+int		init_table(t_args *args);
+void	init_philo(t_args *args);
+int		put_err(char *str);
+LLU		current_time(void);
+void	ft_usleep(int time);
+void	ft_output(t_philos *philos, char *str);
+void	all_free(t_args *args);
 
 #endif //PHILO2_PHILO_H

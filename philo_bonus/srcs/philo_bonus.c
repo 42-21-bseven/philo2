@@ -22,15 +22,13 @@ void	ft_eat(t_philos *philo)
 
 	args = (t_args *)philo->args;
 	sem_wait(args->forks);
-	ft_output(philo, "take fork in LEFT hand");
+	ft_output(philo, "has taken a fork");
 	sem_wait(args->forks);
-	ft_output(philo, "take fork in RIGHT hand");
-	ft_output(philo, "is OM NOM NOM doing");
+	ft_output(philo, "has taken a fork");
+	ft_output(philo, "is eating");
 	ft_usleep(args->time_to_eat);
 	sem_post(args->forks);
-	ft_output(philo, "PUT the fork of left hand");
 	sem_post(args->forks);
-	ft_output(philo, "PUT the fork of right hand");
 	philo->last_eat = current_time();
 	if (philo->full_saturation < args->numb_of_meals)
 		philo->full_saturation++;
@@ -46,7 +44,7 @@ int	*uber_dead_thread(t_philos *dest)
 			< (long long)(current_time() - dest->last_eat))
 		{
 			sem_wait(dest->args->output);
-			printf("%lli philo#%d is dead\n",
+			printf("%lli %d dead\n",
 				current_time() - dest->args->born_time,
 				dest->name_philo);
 			ft_usleep(4);
@@ -65,9 +63,9 @@ void	*philos_thread(void *src)
 	while (1)
 	{
 		ft_eat(philo);
-		ft_output(philo, "is sleeping.");
+		ft_output(philo, "is sleeping");
 		ft_usleep(philo->args->time_to_sleep);
-		ft_output(philo, "is thinking.");
+		ft_output(philo, "is thinking");
 	}
 }
 

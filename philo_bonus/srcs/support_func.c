@@ -14,7 +14,7 @@
 
 int	put_err(char *str)
 {
-	printf("\nERROR%s\n", str);
+	printf("ERROR%s\n", str);
 	return (1);
 }
 
@@ -38,7 +38,7 @@ void	ft_usleep(int time)
 void	ft_output(t_philos *philos, char *str)
 {
 	sem_wait(philos->args->output);
-	printf("%llu\tphilo#%d \t...\t %s\n",
+	printf("%llu %d %s\n",
 		   (current_time() - philos->args->born_time), philos->name_philo, str);
 	sem_post(philos->args->output);
 }

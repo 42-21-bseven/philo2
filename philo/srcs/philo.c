@@ -22,16 +22,14 @@ int	ft_eat(t_philos *philo)
 
 	args = (t_args *)philo->args;
 	pthread_mutex_lock(&args->forks[philo->left_fork]);
-	ft_output(philo, "take LEFT fork");
+	ft_output(philo, "has taken a fork");
 	pthread_mutex_lock(&args->forks[philo->right_fork]);
-	ft_output(philo, "take RIGHT fork");
-	ft_output(philo, "is OM NOM NOM doing");
+	ft_output(philo, "has taken a fork");
+	ft_output(philo, "is eating");
 	philo->last_eat = current_time();
 	ft_usleep(args->time_to_eat);
 	pthread_mutex_unlock(&args->forks[philo->left_fork]);
-	ft_output(philo, "PUT the left fork");
 	pthread_mutex_unlock(&args->forks[philo->right_fork]);
-	ft_output(philo, "PUT the right fork");
 	if (philo->full_saturation < args->numb_of_meals)
 		philo->full_saturation++;
 	if (philo->full_saturation == args->numb_of_meals)
@@ -48,9 +46,9 @@ void	*philos_thread(void *src)
 	{
 		if (ft_eat(philo))
 			return (0);
-		ft_output(philo, "is sleeping.");
+		ft_output(philo, "is sleeping");
 		ft_usleep(philo->args->time_to_sleep);
-		ft_output(philo, "is thinking.");
+		ft_output(philo, "is thinking");
 		ft_usleep(5);
 	}
 }
@@ -72,7 +70,7 @@ void	*dead_thread(void *src)
 				< (long long)(current_time() - dest->philos[i].last_eat))
 			{
 				pthread_mutex_lock(&dest->output);
-				printf("\n%lli philo#%d is dead\n",
+				printf("%lli %d died\n",
 					   current_time() - dest->born_time, i + 1);
 				return (NULL);
 			}

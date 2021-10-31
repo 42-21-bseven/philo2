@@ -14,7 +14,7 @@
 
 int	put_err(char *str)
 {
-	printf("\nERROR%s\n", str);
+	printf("ERROR%s\n", str);
 	return (1);
 }
 
@@ -41,7 +41,7 @@ void	ft_output(t_philos *philos, char *str)
 
 	args = (t_args *)philos->args;
 	pthread_mutex_lock(&args->output);
-	printf("%llu\tphilo#%d \t...\t %s\n",
+	printf("%llu %d %s\n",
 		   (current_time() - args->born_time), philos->name_philo, str);
 	pthread_mutex_unlock(&args->output);
 }

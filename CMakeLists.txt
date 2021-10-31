@@ -9,5 +9,5 @@ set(CMAKE_C_STANDARD 11)
 #        philo.c
 #        philo.h)
 #add_executable(./src/*.c ./include s/philo_one.h)
-file(GLOB SOURCE_FILES *.c *.h)
+file(GLOB SOURCE_FILES ./philo/srcs/*.c ./philo/includes/*.h)
 add_executable(philo2 ${SOURCE_FILES})

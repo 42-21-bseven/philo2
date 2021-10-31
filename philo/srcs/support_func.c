@@ -31,7 +31,7 @@ void	ft_usleep(int time)
 	LLU	t;
 
 	t = current_time();
-	while (current_time() - t < time)
+	while (current_time() - t < (LLU)time)
 		usleep(100);
 }
 

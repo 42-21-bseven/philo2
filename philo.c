@@ -77,9 +77,16 @@ void 	parse_args(t_args *args, char **av)
 		args->numb_of_meals = -1;
 }
 
+void 	init_null(t_args *args)
+{
+	sem_unlink("die");
+	printf("%d", args->die);
+	args->die = sem_open("die", O_CREAT, 0666, 1);
+}
+
 int 	check_vol(t_args args)
 {
-	if (args.number_of_philosophers < 2 || args.number_of_philosophers > 200)
+	if (args.number_of_philosophers < 1 || args.number_of_philosophers > 200)
 		return (put_err("! Wrong number of philosophers."));
 	if (args.time_to_die < 1)
 		return (put_err("! Wrong time to die."));
@@ -96,13 +103,15 @@ int 	check_vol(t_args args)
 int 	init_table(t_args *args)
 {
 	args->philos = malloc(sizeof(t_philos) * args->number_of_philosophers);
-	if (!(args->philos))
+	if (!args->philos)
 		return (put_err(" philos alloc."));
 	sem_unlink("forks");
 	sem_unlink("output");
 	args->output = sem_open("output", O_CREAT, 0666, 1);
 	args->forks = sem_open("forks", O_CREAT, 0666, args->number_of_philosophers);
 	args->pid = malloc(sizeof (pid_t) * args->number_of_philosophers);
+	if (!args->pid)
+		return (put_err(" forks alloc."));
 	return (0);
 }
 
@@ -148,20 +157,22 @@ void 	ft_eat(t_philos *philo)
 
 	args = (t_args *)philo->args;
 	sem_wait(args->forks);
-	ft_output(philo, "take LEFT fork");
+	ft_output(philo, "take fork in LEFT hand");
 	sem_wait(args->forks);
-	ft_output(philo, "take RIGHT fork");
+	ft_output(philo, "take fork in RIGHT hand");
 	ft_output(philo, "is OM NOM NOM doing");
 	ft_usleep(args->time_to_eat);
 	sem_post(args->forks);
-	ft_output(philo, "PUT the left fork");
+	ft_output(philo, "PUT the fork of left hand");
 	sem_post(args->forks);
-	ft_output(philo, "PUT the right fork");
+	ft_output(philo, "PUT the fork of right hand");
 	philo->last_eat = current_time();
 	if (philo->full_saturation < args->numb_of_meals)
 		philo->full_saturation++;
 	if (philo->full_saturation == args->numb_of_meals)
-		exit (0);
+	{
+		exit(0);
+	}
 //	return (0);
 }
 
@@ -214,7 +225,7 @@ int 	*uber_dead_thread(t_philos *dest)
 		{
 			sem_wait(dest->args->output);
 			printf("%lli philo#%d is dead\n", current_time() - dest->args->born_time, dest->name_philo);
-//			ft_usleep(4);
+			ft_usleep(4);
 			exit (0);
 		}
 		if (dest->full_saturation == dest->args->numb_of_meals)
@@ -243,6 +254,8 @@ int 	create_threads(t_args *args)
 		i++;
 	}
 	waitpid(-1, NULL, 0);
+	if (args->numb_of_meals > 1)// && args->die == 1)
+		printf("%ld FINISH DINER", (long) (current_time() - args->born_time));
 	return (0);
 }
 
@@ -269,11 +282,13 @@ int	main(int ac, char **av)
 	if (check_args(ac, av) < 0)
 		return (put_err(" in args!"));
 	parse_args(&args, av);
+	init_null(&args);
 	if (check_vol(args))
 		return (1);
 	if (init_table(&args))
 		return (1);
 	init_philo(&args);
+
 	if (create_threads(&args))
 		return (1);
 	all_free(&args);

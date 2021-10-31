@@ -35,7 +35,7 @@ typedef struct s_args
 	LLU					born_time;
 	t_philos			*philos;
 	sem_t				*output;
-	int					err;
+	sem_t				*die;
 	pid_t				*pid;
 }								t_args;
 

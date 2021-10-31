@@ -21,18 +21,21 @@ LLU		current_time()
 
 int		ft_atoi(char *str)
 {
-	int res;
+	long res;
 
 	res = 0;
 	while (*str)
 	{
 		if (*str < '0' || *str > '9')
 			return (-1);
-		res = res * 10 + (*str++ - '0');
+		if (res < 2147483647)
+			res = res * 10 + (*str++ - '0');
+		else
+			return (-2);
 	}
-	if (res > 2147483647 || res < 0)
-		return (-1);
-	return (res);
+	if (res > 2147483647)
+		return (-2);
+	return ((int)res);
 }
 
 int 	chk_not_num(char *str)
@@ -62,6 +65,13 @@ int 	check_args(int ac, char **av)
 	return 0;
 }
 
+void	init_null(t_args *args)
+{
+	args->forks = NULL;
+	args->philos = NULL;
+	pthread_mutex_init(&args->output, NULL); //??
+}
+
 void 	parse_args(t_args *args, char **av)
 {
 	args->number_of_philosophers = ft_atoi(av[1]);
@@ -72,12 +82,11 @@ void 	parse_args(t_args *args, char **av)
 		args->numb_of_meals = ft_atoi(av[5]);
 	else
 		args->numb_of_meals = -1;
-	pthread_mutex_init(&args->output, NULL); //??
 }
 
 int 	check_vol(t_args args)
 {
-	if (args.number_of_philosophers < 2 || args.number_of_philosophers > 200)
+	if (args.number_of_philosophers < 1 || args.number_of_philosophers > 200)
 		return (put_err("! Wrong number of philosophers."));
 	if (args.time_to_die < 1)
 		return (put_err("! Wrong time to die."));
@@ -85,6 +94,8 @@ int 	check_vol(t_args args)
 		return (put_err("! Wrong meal time."));
 	if (args.time_to_sleep < 1)
 		return (put_err("! Wrong sleep to time."));
+	if (args.numb_of_meals < -1)
+		return (put_err("! Wrong numder of meals."));
 	if (args.numb_of_meals == 0)
 		return (put_err(". These philosophers are fed up."));
 	return (0);
@@ -248,6 +259,7 @@ int 	main(int ac, char **av)
 	if (check_args(ac, av) < 0)
 		return (put_err(" in args!"));
 	parse_args(&args, av);
+	init_null(&args);
 	if (check_vol(args))
 		return (1);
 	if (init_table(&args))
